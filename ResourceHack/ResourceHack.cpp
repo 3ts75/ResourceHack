@@ -66,7 +66,7 @@ LPVOID ResourceHack(LPVOID& buffer, DWORD& size, string& after_path, string& bef
 		}
 		write_size += (resource_size / 0x10 + 2) * 0x10;
 
-		after_size = FileRead(after_path, after_buffer);
+		after_size = DiskToMemory(after_path, after_buffer);
 		write_size += after_size;
 		write_size = (write_size / pe_header->get_nt()->OptionalHeader.FileAlignment + 1) * pe_header->get_nt()->OptionalHeader.FileAlignment;
 
@@ -85,7 +85,7 @@ LPVOID ResourceHack(LPVOID& buffer, DWORD& size, string& after_path, string& bef
 		PIMAGE_RESOURCE_DIRECTORY hacked_dir{ (PIMAGE_RESOURCE_DIRECTORY)((ULONGLONG)write_buffer + size) };
 		LPVOID before_buffer{ nullptr };
 		DWORD before_size{ 0 };
-		before_size = FileRead(before_path, before_buffer);
+		before_size = DiskToMemory(before_path, before_buffer);
 		after_buffer = (LPVOID)((ULONGLONG)write_buffer + size + (resource_size / 0x10 + 2) * 0x10);
 		ResourceResetting(hacked_dir, resource_section->VirtualAddress, hacked_section->VirtualAddress, hacked_dir, after_buffer, after_size, before_buffer, before_size);
 	}
@@ -106,11 +106,11 @@ int main() {
 	DWORD size{ 0 };
 	LPVOID write_buffer{ nullptr };
 
-	size = FileRead(path, read_buffer);
+	size = DiskToMemory(path, read_buffer);
 
 	path += ".exe";
 
 	write_buffer = ResourceHack(read_buffer, size, after_path, before_path);
 
-	FileWrite(path.c_str(), write_buffer, size);
+	MemoryToDisk(path.c_str(), write_buffer, size);
 }

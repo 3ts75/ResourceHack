@@ -1,7 +1,7 @@
 #include "FileOperations.h"
 #include "CreateType.h"
 
-DWORD FileRead(std::string& strFilePath, LPVOID& lpBuffer) {
+DWORD DiskToMemory(std::string& strFilePath, LPVOID& lpBuffer) {
 	DWORD ret{ 0 };
 
 	do {
@@ -18,8 +18,7 @@ DWORD FileRead(std::string& strFilePath, LPVOID& lpBuffer) {
 			break;
 		}
 
-		//lpBuffer = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, lpFileSize->QuadPart);
-		lpBuffer = VirtualAlloc(nullptr, lpFileSize->QuadPart, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		lpBuffer = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, lpFileSize->QuadPart);
 		if (lpBuffer == NULL) {
 			break;
 		}
@@ -37,7 +36,7 @@ DWORD FileRead(std::string& strFilePath, LPVOID& lpBuffer) {
 
 
 template<class T>
-bool FileWrite(const char* strFilePath, T lpBuffer, DWORD& dwFileSize) {
+bool MemoryToDisk(const char* strFilePath, T lpBuffer, DWORD& dwFileSize) {
 	bool ret{ false };
 
 	do {
@@ -57,5 +56,5 @@ bool FileWrite(const char* strFilePath, T lpBuffer, DWORD& dwFileSize) {
 	return false;
 }
 
-template bool FileWrite<char*>(const char* strFilePath, char* lpBuffer, DWORD& dwFileSize);
-template bool FileWrite<LPVOID>(const char* strFilePath, LPVOID lpBuffer, DWORD& dwFileSize);
+template bool MemoryToDisk<char*>(const char* strFilePath, char* lpBuffer, DWORD& dwFileSize);
+template bool MemoryToDisk<LPVOID>(const char* strFilePath, LPVOID lpBuffer, DWORD& dwFileSize);

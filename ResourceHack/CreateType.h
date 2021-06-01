@@ -15,8 +15,6 @@ public:
 	}
 };
 
-// mi2
-// TODO: メモリ上にファイルがないとdos_header->e_lfanewがないので改善の余地あり
 class IMAGE_PE_HEADER {
 	PIMAGE_DOS_HEADER dos_header;
 	PIMAGE_NT_HEADERS64 nt_headers;
